@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBloxPoker - Texas Hold'em</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-container">
+        <header>
+            <h1>GBloxPoker</h1>
+            <div class="header-controls">
+                <button id="reset-chips" class="secondary-btn">Reset Chips</button>
+                <button id="restart-game" class="secondary-btn">New Game</button>
+                <div id="sound-toggle" class="icon-toggle">🔊</div>
+            </div>
+        </header>
+
+        <div id="poker-table">
+            <div id="dealer-area">
+                <div id="community-cards"></div>
+                <div id="pot-display">Pot: <span id="pot-amount">0</span></div>
+                <div id="dealer-message">Welcome to GBloxPoker!</div>
+            </div>
+
+            <div id="players-container">
+                <!-- AI Players will be injected here -->
+            </div>
+
+            <div id="human-player" class="player-box active-turn">
+                <div class="player-info">
+                    <span class="player-name">You (Player 1)</span>
+                    <span class="player-balance">$<span id="player-balance">1000</span></span>
+                </div>
+                <div id="hand-name-display" class="hand-name-badge">High Card</div>
+                <div id="human-cards" class="cards-hand"></div>
+                <div class="player-status" id="player-status">Waiting...</div>
+            </div>
+        </div>
+
+        <div id="controls">
+            <button id="fold-btn" class="action-btn fold">Fold</button>
+            <button id="check-btn" class="action-btn check">Check</button>
+            <button id="call-btn" class="action-btn call">Call <span id="call-value"></span></button>
+            <div class="raise-group">
+                <input type="number" id="raise-amount" min="20" step="20" value="20">
+                <button id="raise-btn" class="action-btn raise">Raise</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/cards.js"></script>
+    <script src="js/handEvaluator.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/dealer.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+</body>
+
+</html>

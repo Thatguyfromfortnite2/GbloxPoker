@@ -2,7 +2,7 @@
 
 A complete, standalone Texas Hold'em poker game built with modern web technologies. Play against AI bots in a premium, dark-themed poker environment.
 
-![GBloxPoker Screenshot Placeholder](/placeholder.png)
+![GBloxPoker Screenshot](screenshot.png)
 
 ## Features
 

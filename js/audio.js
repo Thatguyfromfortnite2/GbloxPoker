@@ -3,12 +3,33 @@ class AudioEngine {
         this.ctx = null;
         this.muted = false;
         this.setupMuteToggle();
+        this.setupGestureUnlock();
     }
 
     init() {
         if (!this.ctx) {
             this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         }
+        if (this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+    }
+
+    setupGestureUnlock() {
+        const unlock = () => {
+            if (this.ctx && this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            } else if (!this.ctx) {
+                this.init();
+            }
+            // Once unlocked, we can remove these listeners
+            document.removeEventListener('click', unlock);
+            document.removeEventListener('keydown', unlock);
+            document.removeEventListener('touchstart', unlock);
+        };
+        document.addEventListener('click', unlock);
+        document.addEventListener('keydown', unlock);
+        document.addEventListener('touchstart', unlock);
     }
 
     setupMuteToggle() {

@@ -12,6 +12,7 @@ class UI {
     }
 
     renderCard(card, isHidden = false) {
+        if (window.gameAudio) window.gameAudio.playDealSound();
         const cardEl = document.createElement('div');
         cardEl.className = `card ${isHidden ? 'hidden' : (card.suit === '♥' || card.suit === '♦' ? 'red' : 'black')}`;
 
@@ -107,8 +108,26 @@ class UI {
     }
 
     updateStatus(playerId, status) {
-        const el = playerId === 0 ? document.getElementById('player-status') : document.querySelector(`#player-${playerId} .player-status`);
-        if (el) el.textContent = status;
+        const el = playerId === 0 ? document.getElementById('human-player') : document.getElementById(`player-${playerId}`);
+        const statusText = el ? (playerId === 0 ? document.getElementById('player-status') : el.querySelector('.player-status')) : null;
+
+        if (statusText) statusText.textContent = status;
+        if (!el || !window.gameAudio) return;
+
+        // Trigger Animations and Sounds
+        el.classList.remove('anim-check', 'anim-raise', 'anim-fold');
+        void el.offsetWidth; // Trigger reflow
+
+        if (status.includes('Fold')) {
+            el.classList.add('anim-fold');
+            window.gameAudio.playFoldSound();
+        } else if (status === 'Check') {
+            el.classList.add('anim-check');
+            window.gameAudio.playKnockSound();
+        } else if (status.includes('Raise') || status.includes('Call') || status.includes('Small') || status.includes('Big')) {
+            el.classList.add('anim-raise');
+            window.gameAudio.playChipSound();
+        }
     }
 
     toggleControls(enabled, callAmount = 0) {

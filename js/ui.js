@@ -13,18 +13,20 @@ class UI {
 
     renderCard(card, isHidden = false) {
         const cardEl = document.createElement('div');
-        cardEl.className = `card ${isHidden ? 'hidden' : card.color}`;
+        cardEl.className = `card ${isHidden ? 'hidden' : (card.suit === '♥' || card.suit === '♦' ? 'red' : 'black')}`;
+
         if (!isHidden) {
             cardEl.innerHTML = `
                 <div class="card-rank">${card.rank}</div>
-                <div class="card-suit">${card.suit}</div>
+                <div class="card-suit" style="font-size: 1.5rem">${card.suit}</div>
+                <div class="card-rank card-rank-bottom" style="transform: rotate(180deg)">${card.rank}</div>
             `;
         }
         return cardEl;
     }
 
     updateTable(gameState) {
-        this.potAmountEl.textContent = gameState.pot;
+        this.potAmountEl.textContent = `$${gameState.pot.toLocaleString()}`;
         this.communityCardsEl.innerHTML = '';
         gameState.communityCards.forEach(card => {
             this.communityCardsEl.appendChild(this.renderCard(card));
@@ -33,7 +35,7 @@ class UI {
 
     updatePlayerUI(player, communityCards = []) {
         if (!player.isAI) {
-            this.playerBalanceEl.textContent = player.balance;
+            this.playerBalanceEl.textContent = player.balance.toLocaleString();
             this.humanCardsEl.innerHTML = '';
             player.hand.forEach(card => {
                 this.humanCardsEl.appendChild(this.renderCard(card));
@@ -45,8 +47,13 @@ class UI {
                     const result = HandEvaluator.evaluate(combined);
                     this.handNameEl.textContent = HandEvaluator.getHandName(result);
                     this.handNameEl.style.display = 'inline-block';
+                } else if (combined.length > 2) {
+                    const result = HandEvaluator.evaluate(combined);
+                    this.handNameEl.textContent = HandEvaluator.getHandName(result);
+                    this.handNameEl.style.display = 'inline-block';
                 } else {
                     this.handNameEl.textContent = 'Pre-flop';
+                    this.handNameEl.style.display = 'inline-block';
                 }
             } else {
                 this.handNameEl.style.display = 'none';
@@ -56,7 +63,7 @@ class UI {
         } else {
             const playerEl = document.getElementById(`player-${player.id}`);
             if (playerEl) {
-                playerEl.querySelector('.player-balance').textContent = `$${player.balance}`;
+                playerEl.querySelector('.player-balance').textContent = `$${player.balance.toLocaleString()}`;
                 playerEl.classList.toggle('folded', player.isFolded);
                 const cardsEl = playerEl.querySelector('.cards-hand');
                 cardsEl.innerHTML = '';
@@ -77,7 +84,7 @@ class UI {
             pEl.innerHTML = `
                 <div class="player-info">
                     <span class="player-name">${p.name}</span>
-                    <span class="player-balance">$${p.balance}</span>
+                    <span class="player-balance">$${p.balance.toLocaleString()}</span>
                 </div>
                 <div class="cards-hand"></div>
                 <div class="player-status">Waiting...</div>

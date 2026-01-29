@@ -8,6 +8,7 @@ class UI {
         this.handNameEl = document.getElementById('hand-name-display');
         this.playerBalanceEl = document.getElementById('player-balance');
         this.callValueEl = document.getElementById('call-value');
+        this.timerEl = document.getElementById('turn-timer-display');
         this.actionButtons = document.querySelectorAll('.action-btn');
     }
 
@@ -30,25 +31,26 @@ class UI {
         this.potAmountEl.textContent = `$${gameState.pot.toLocaleString()}`;
         this.communityCardsEl.innerHTML = '';
         gameState.communityCards.forEach(card => {
-            this.communityCardsEl.appendChild(this.renderCard(card));
+            if (card) this.communityCardsEl.appendChild(this.renderCard(card));
         });
     }
 
     updatePlayerUI(player, communityCards = []) {
-        if (!player.isAI) {
+        // Find if this is the local human player
+        const isLocalHuman = window.multiplayer ? (player.name === window.multiplayer.playerName) : (player.id === 0);
+
+        if (isLocalHuman) {
             this.playerBalanceEl.textContent = player.balance.toLocaleString();
             this.humanCardsEl.innerHTML = '';
-            player.hand.forEach(card => {
-                this.humanCardsEl.appendChild(this.renderCard(card));
-            });
+            if (player.hand) {
+                player.hand.forEach(card => {
+                    this.humanCardsEl.appendChild(this.renderCard(card));
+                });
+            }
 
-            if (player.hand.length === 2) {
+            if (player.hand && player.hand.length === 2) {
                 const combined = [...player.hand, ...communityCards];
                 if (combined.length >= 5) {
-                    const result = HandEvaluator.evaluate(combined);
-                    this.handNameEl.textContent = HandEvaluator.getHandName(result);
-                    this.handNameEl.style.display = 'inline-block';
-                } else if (combined.length > 2) {
                     const result = HandEvaluator.evaluate(combined);
                     this.handNameEl.textContent = HandEvaluator.getHandName(result);
                     this.handNameEl.style.display = 'inline-block';
@@ -62,35 +64,49 @@ class UI {
 
             document.getElementById('human-player').classList.toggle('folded', player.isFolded);
         } else {
-            const playerEl = document.getElementById(`player-${player.id}`);
+            // REMOTE or AI PLAYER
+            let playerEl = document.getElementById(`player-${player.id || player.name}`);
+            if (!playerEl) {
+                // If it doesn't exist yet (e.g. joined late), create it
+                this.createRemotePlayerBox(player);
+                playerEl = document.getElementById(`player-${player.id || player.name}`);
+            }
+
             if (playerEl) {
                 playerEl.querySelector('.player-balance').textContent = `$${player.balance.toLocaleString()}`;
                 playerEl.classList.toggle('folded', player.isFolded);
                 const cardsEl = playerEl.querySelector('.cards-hand');
                 cardsEl.innerHTML = '';
-                player.hand.forEach(() => {
-                    cardsEl.appendChild(this.renderCard(null, true));
-                });
+                if (player.hand) {
+                    player.hand.forEach(() => {
+                        cardsEl.appendChild(this.renderCard(null, true));
+                    });
+                }
             }
         }
+    }
+
+    createRemotePlayerBox(p) {
+        const index = Array.from(this.playersContainerEl.children).length;
+        const pEl = document.createElement('div');
+        pEl.id = `player-${p.id || p.name}`;
+        pEl.className = `player-box ai-pos-${index}`;
+        pEl.innerHTML = `
+            <div class="player-info">
+                <span class="player-name">${p.name}</span>
+                <span class="player-balance">$${p.balance.toLocaleString()}</span>
+            </div>
+            <div class="cards-hand"></div>
+            <div class="player-status">Waiting...</div>
+        `;
+        this.playersContainerEl.appendChild(pEl);
     }
 
     initAIPlayers(players) {
         this.playersContainerEl.innerHTML = '';
         players.forEach((p, index) => {
             if (!p.isAI) return;
-            const pEl = document.createElement('div');
-            pEl.id = `player-${p.id}`;
-            pEl.className = `player-box ai-pos-${index}`;
-            pEl.innerHTML = `
-                <div class="player-info">
-                    <span class="player-name">${p.name}</span>
-                    <span class="player-balance">$${p.balance.toLocaleString()}</span>
-                </div>
-                <div class="cards-hand"></div>
-                <div class="player-status">Waiting...</div>
-            `;
-            this.playersContainerEl.appendChild(pEl);
+            this.createRemotePlayerBox(p);
         });
     }
 
@@ -98,36 +114,33 @@ class UI {
         this.dealerMessageEl.textContent = msg;
     }
 
-    showTurn(playerId) {
-        document.querySelectorAll('.player-box').forEach(el => el.classList.remove('active-turn'));
-        if (playerId === 0) {
-            document.getElementById('human-player').classList.add('active-turn');
-        } else {
-            document.getElementById(`player-${playerId}`)?.classList.add('active-turn');
+    updateTimer(seconds) {
+        if (this.timerEl) {
+            this.timerEl.textContent = seconds > 0 ? seconds : '';
         }
     }
 
+    showTurn(playerId) {
+        document.querySelectorAll('.player-box').forEach(el => el.classList.remove('active-turn'));
+        const el = document.getElementById(`player-${playerId}`) || (playerId === 0 ? document.getElementById('human-player') : null);
+        if (el) el.classList.add('active-turn');
+    }
+
     updateStatus(playerId, status) {
-        const el = playerId === 0 ? document.getElementById('human-player') : document.getElementById(`player-${playerId}`);
-        const statusText = el ? (playerId === 0 ? document.getElementById('player-status') : el.querySelector('.player-status')) : null;
+        const id = (playerId === 0 || (window.multiplayer && playerId === window.multiplayer.playerName)) ? 'human-player' : `player-${playerId}`;
+        const el = document.getElementById(id);
+        const statusText = el ? (id === 'human-player' ? document.getElementById('player-status') : el.querySelector('.player-status')) : null;
 
         if (statusText) statusText.textContent = status;
-        if (!el || !window.gameAudio) return;
+        if (!el) return;
 
-        // Trigger Animations and Sounds
+        // Trigger Animations
         el.classList.remove('anim-check', 'anim-raise', 'anim-fold');
-        void el.offsetWidth; // Trigger reflow
+        void el.offsetWidth;
 
-        if (status.includes('Fold')) {
-            el.classList.add('anim-fold');
-            window.gameAudio.playFoldSound();
-        } else if (status === 'Check') {
-            el.classList.add('anim-check');
-            window.gameAudio.playKnockSound();
-        } else if (status.includes('Raise') || status.includes('Call') || status.includes('Small') || status.includes('Big')) {
-            el.classList.add('anim-raise');
-            window.gameAudio.playChipSound();
-        }
+        if (status.includes('Fold')) el.classList.add('anim-fold');
+        else if (status === 'Check') el.classList.add('anim-check');
+        else if (status.includes('Raise') || status.includes('Call')) el.classList.add('anim-raise');
     }
 
     toggleControls(enabled, callAmount = 0) {

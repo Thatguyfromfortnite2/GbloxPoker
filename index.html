@@ -25,6 +25,8 @@
                 <div id="community-cards"></div>
                 <div id="pot-display">Pot: <span id="pot-amount">0</span></div>
                 <div id="dealer-message">Welcome to GBloxPoker!</div>
+                <div id="turn-timer-display"
+                    style="font-size: 2rem; font-weight: 800; color: var(--accent-pink); margin-top: 10px;"></div>
             </div>
 
             <div id="players-container">
@@ -53,12 +55,17 @@
         </div>
     </div>
 
+    <!-- Firebase SDK (v9 compatibility) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <script src="js/cards.js"></script>
     <script src="js/audio.js"></script>
     <script src="js/handEvaluator.js"></script>
     <script src="js/ai.js"></script>
     <script src="js/dealer.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/multiplayer.js"></script>
     <script src="js/game.js"></script>
 </body>
 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBloxPoker - Lobby</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="lobby-container">
+        <header>
+            <h1>GBloxPoker Lobby</h1>
+            <div id="user-profile" class="glass-panel">
+                <span id="display-name">Player</span>
+                <button id="edit-name" class="secondary-btn">Edit</button>
+            </div>
+        </header>
+
+        <main>
+            <section id="table-creation" class="glass-panel">
+                <h2>Create New Table</h2>
+                <div class="input-group">
+                    <input type="text" id="new-table-name" placeholder="Table Name...">
+                    <select id="max-players">
+                        <option value="2">2 Players</option>
+                        <option value="4">4 Players</option>
+                        <option value="6" selected>6 Players</option>
+                    </select>
+                    <button id="create-table-btn" class="primary-btn">Create Table</button>
+                </div>
+            </section>
+
+            <section id="table-list-section">
+                <div class="section-header">
+                    <h2>Active Tables</h2>
+                    <button id="refresh-lobby" class="secondary-btn">Refresh</button>
+                </div>
+                <div id="tables-grid">
+                    <!-- Tables will be injected here -->
+                    <div class="lobby-message">Searching for tables...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Firebase SDK (v9 compatibility) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="js/lobby.js"></script>
+</body>
+
+</html>

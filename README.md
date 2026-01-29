@@ -2,7 +2,7 @@
 
 A complete, standalone Texas Hold'em poker game built with modern web technologies. Play against AI bots in a premium, dark-themed poker environment.
 
-![GBloxPoker Screenshot Placeholder](https://via.placeholder.com/800x450?text=GBloxPoker+Interface)
+![GBloxPoker Screenshot Placeholder](/placeholder.png)
 
 ## Features
 
@@ -56,4 +56,3 @@ gbloxpoker/
    ```
 
 ---
-*Created with ❤️ by Antigravity*

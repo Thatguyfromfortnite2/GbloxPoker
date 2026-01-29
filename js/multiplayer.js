@@ -66,8 +66,6 @@ class MultiplayerManager {
         if (!this.tableRef) return;
 
         // Update the remote state
-        // In a real implementation, we might use transactions or a specialized server
-        // For this serverless version, we update the table root with the new game state
         await this.tableRef.update({
             lastAction: {
                 player: this.playerName,

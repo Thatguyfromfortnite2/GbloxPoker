@@ -1,58 +1,77 @@
 # GBloxPoker 🃏
 
-A complete, standalone Texas Hold'em poker game built with modern web technologies. Play against AI bots in a premium, dark-themed poker environment.
+A complete, real-time multiplayer Texas Hold'em poker platform. Play against friends online or practice against AI bots in a premium, glassmorphic poker environment.
 
 ![GBloxPoker Screenshot](screenshot.png)
 
-## Features
+## 🌟 Features
 
-- **Texas Hold'em Rules**: Full implementation of blinds, betting rounds (Pre-flop, Flop, Turn, River), and hand evaluation.
-- **AI Bots**: 4 AI opponents with varying difficulty levels (Easy, Medium, Hard).
-- **Modern UI**: Sleek dark theme with glassmorphism effects, rounded cards, and smooth animations.
-- **Responsive Design**: Optimized for desktop play.
-- **Pure Javascript**: No backend, no database, no real money. Runs entirely in your browser.
-- **Game Controls**: Fold, Check, Call, and Raise with a custom amount.
-- **Dealer System**: Automatic dealer that manages the deck, pot, and game flow.
+- **Online Multiplayer**: Real-time 2–6 player tables via a sleek Lobby system.
+- **Real-time Sync**: Actions, pots, and cards synchronized instantly using Firebase.
+- **Lobby System**: Create your own table or join existing ones with live player counts.
+- **Turn Limits**: 30-second shot clock per player to keep the game fast-paced.
+- **AI Bots**: AI opponents (Easy, Medium, Hard) fill empty seats or play in AI-only mode.
+- **Premium UI**: Modern dark theme with glassmorphism, smooth CSS animations, and procedural sound effects.
+- **Dealer Engine**: Robust automatic dealer handles deck shuffling, betting phases, and hand evaluation.
+- **No Real Money**: Purely educational/entertainment tool using fake chips.
 
-## Project Structure
+## 📂 Project Structure
 
 ```text
 gbloxpoker/
-├── index.html          # Main entry point
-├── style.css           # Premium styling and animations
+├── lobby.html          # Multiplayer discovery and entry
+├── index.html          # Main game table
+├── style.css           # Premium styling, animations, and typography
 └── js/
-    ├── game.js         # Main game engine / Orchestrator
-    ├── dealer.js       # Game state and rules management
+    ├── lobby.js        # Lobby creation/joining logic
+    ├── multiplayer.js  # Firebase real-time sync engine
+    ├── game.js         # Core game state and turn management
+    ├── dealer.js       # Poker rules and phase transitions
     ├── ai.js           # Bot decision-making logic
-    ├── cards.js        # Card and Deck classes
-    ├── handEvaluator.js # Poker hand scoring logic
-    └── ui.js           # UI rendering and DOM management
+    ├── audio.js        # Procedural sound engine (Web Audio API)
+    ├── cards.js        # Card and Deck primitives
+    ├── ui.js           # Dynamic rendering and animations
+    └── handEvaluator.js # Advanced hand scoring logic
 ```
 
-## How to Run Locally
+## 🚀 Setting Up Multiplayer (Firebase)
 
-1. **Clone or Download**: Download the project folder.
-2. **Open index.html**: Simply double-click `index.html` to open it in any modern web browser (Chrome, Firefox, Safari, Edge).
-3. **No Setup Required**: No `npm install` or local servers needed. It's built with standard ES Modules.
+To enable the online features, you need to connect your own Firebase project:
 
-## How to Play
+1.  **Create a Project**: Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
+2.  **Enable Realtime Database**:
+    - In the "Build" menu, select **Realtime Database**.
+    - Click **Create Database** and set the location.
+    - Set the **Rules** to `public` for testing (or implement Auth for production):
+      ```json
+      {
+        "rules": {
+          ".read": true,
+          ".write": true
+        }
+      }
+      ```
+3.  **Get Client Config**:
+    - Project Settings > General > Your Apps > Click the `</>` (Web) icon.
+    - Copy the `firebaseConfig` object.
+4.  **Update Source Code**:
+    - Paste your config into `lobby.html` and `index.html` (inside the `<script>` tags).
+    - Paste the same config into `js/lobby.js` and `js/multiplayer.js`.
 
-1. You start with **$1000** in fake chips.
-2. Follow the on-screen dealer messages to know the current game state.
-3. Use the control panel at the bottom to make your moves.
-4. The goal is to win the pot by having the best 5-card hand or making others fold.
+## 💻 How to Run
 
-## GitHub Upload Instructions
+1.  **Launch Lobby**: Open [lobby.html](lobby.html) in your browser.
+2.  **Enter Name**: Set your display name.
+3.  **Create/Join**: Start a new table or join one from the list.
+4.  **Multiplayer Testing**: To test alone, open the game in two separate browser windows (or different browsers).
 
-1. Initialize a new repository on GitHub named `gbloxpoker`.
-2. Run the following commands in your local `gbloxpoker` folder:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit: Complete GBloxPoker game"
-   git branch -M main
-   git remote add origin https://github.com/Thatguyfromfortnite2/GbloxPoker.git
-   git push -u origin main
-   ```
+## 🛠️ Tech Stack
+
+- **Frontend**: Vanilla JavaScript (ES6+), CSS3 (Flex/Grid/Animations), HTML5.
+- **Backend**: Firebase Realtime Database (Serverless).
+- **Audio**: Web Audio API (Procedural Sound Synthesis).
 
 ---
+
+> [!NOTE]
+> This project is designed for browsers that support ES Modules and the Web Audio API (Chrome, Safari, Firefox, Edge).
